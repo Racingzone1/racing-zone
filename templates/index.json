@@ -1,0 +1,360 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "image_banner": {
+      "type": "image-banner",
+      "blocks": {
+        "text": {
+          "type": "text",
+          "settings": {
+            "text": "Welcome industry insiders",
+            "text_style": "caption-with-letter-spacing"
+          }
+        },
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "<em><strong>Find your <a href=\"/collections/tuning-body-parts\">TUNING &amp; BODY PARTS HERE</a></strong></em>",
+            "heading_size": "h2"
+          }
+        }
+      },
+      "block_order": [
+        "text",
+        "heading"
+      ],
+      "settings": {
+        "image": "shopify://shop_images/racing-zone-bmw-drift-ro-i-paralele.png",
+        "image_overlay_opacity": 10,
+        "image_height": "small",
+        "image_behavior": "none",
+        "desktop_content_position": "middle-left",
+        "desktop_content_alignment": "left",
+        "show_text_box": false,
+        "color_scheme": "scheme-5",
+        "stack_images_on_mobile": true,
+        "mobile_content_alignment": "center",
+        "show_text_below": false
+      }
+    },
+    "brand_marquee": {
+      "type": "brand-marquee",
+      "blocks": {
+        "logo1": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/BCRacing_-_White_text_black_border.png"
+          }
+        },
+        "logo2": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/kw-suspensions-vector-logo.png"
+          }
+        },
+        "logo3": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/341_jpg.png"
+          }
+        },
+        "logo4": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/ec9c7e9b19052.png"
+          }
+        },
+        "logo5": {
+          "type": "logo",
+          "settings": {
+            "image": "shopify://shop_images/Bilstein-logo.png"
+          }
+        }
+      },
+      "block_order": ["logo1", "logo2", "logo3", "logo4", "logo5"],
+      "settings": {
+        "color_scheme": "scheme-4",
+        "speed": 40,
+        "logo_height": 40,
+        "padding_top": 12,
+        "padding_bottom": 12
+      }
+    },
+    "rich_text": {
+      "type": "rich-text",
+      "blocks": {
+        "text": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Beneficiază de FULL SERVICE alături de partenerul nostru <a href=\"https://voxmobilityhub.ro\" target=\"_blank\" rel=\"noopener\"><strong>VOX MOBILITY HUB</strong></a>!</p>"
+          }
+        }
+      },
+      "block_order": [
+        "text"
+      ],
+      "settings": {
+        "desktop_content_position": "center",
+        "content_alignment": "center",
+        "color_scheme": "scheme-3",
+        "full_width": true,
+        "padding_top": 4,
+        "padding_bottom": 4
+      }
+    },
+    "featured_collection1": {
+      "type": "featured-collection",
+      "settings": {
+        "collection": "bestsellers",
+        "products_to_show": 5,
+        "title": "Proven bestsellers",
+        "heading_size": "h2",
+        "description": "",
+        "show_description": false,
+        "description_style": "body",
+        "columns_desktop": 5,
+        "enable_desktop_slider": false,
+        "full_width": false,
+        "show_view_all": true,
+        "view_all_style": "solid",
+        "color_scheme": "",
+        "image_ratio": "adapt",
+        "image_shape": "default",
+        "show_secondary_image": false,
+        "show_vendor": false,
+        "show_rating": false,
+        "quick_add": "none",
+        "columns_mobile": "2",
+        "swipe_on_mobile": false,
+        "padding_top": 36,
+        "padding_bottom": 52
+      }
+    },
+    "collection_list": {
+      "type": "collection-list",
+      "blocks": {
+        "featured_collection1": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "scaune-sport"
+          }
+        },
+        "featured_collection2": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "casti"
+          }
+        },
+        "featured_collection3": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "hans-si-protectii"
+          }
+        },
+        "featured_collection4": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "centuri-sport"
+          }
+        },
+        "featured_collection5": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "volane-sport"
+          }
+        }
+      },
+      "block_order": [
+        "featured_collection1",
+        "featured_collection2",
+        "featured_collection3",
+        "featured_collection4",
+        "featured_collection5"
+      ],
+      "settings": {
+        "title": "Shop our top categories",
+        "heading_size": "h2",
+        "image_ratio": "square",
+        "columns_desktop": 5,
+        "color_scheme": "scheme-4",
+        "show_view_all": false,
+        "columns_mobile": "1",
+        "swipe_on_mobile": false,
+        "padding_top": 48,
+        "padding_bottom": 60
+      }
+    },
+    "multicolumn1": {
+      "type": "multicolumn",
+      "blocks": {
+        "column7": {
+          "type": "column",
+          "settings": {
+            "title": "⭐⭐⭐⭐⭐ Andrei M. — București",
+            "text": "<p>\"Casca Stilo a ajuns în exact 6 zile, exact cum mi s-a promis. Calitate excelentă, ambalaj impecabil. Recomand Racing-Zone cu mare drag!\"</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column8": {
+          "type": "column",
+          "settings": {
+            "title": "⭐⭐⭐⭐⭐ Mihai P. — Cluj-Napoca",
+            "text": "<p>\"Centura Sparco pe care am comandat-o este perfectă pentru pistă. Echipa a răspuns rapid la întrebări și livrarea a fost promptă. Voi reveni!\"</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column9": {
+          "type": "column",
+          "settings": {
+            "title": "⭐⭐⭐⭐⭐ Cristian T. — Timișoara",
+            "text": "<p>\"Sistemul HANS arată exact ca în poze și se simte solid. Prețurile sunt corecte față de alte magazine. Cu siguranță cumpăr și data viitoare!\"</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column10": {
+          "type": "column",
+          "settings": {
+            "title": "⭐⭐⭐⭐⭐ Alexandru D. — Iași",
+            "text": "<p>\"Cel mai bun magazin de piese auto de performanță din România. Volane, căști, centuri — totul original și la prețuri competitive. Felicitări!\"</p>",
+            "link_label": "",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "column7",
+        "column8",
+        "column9",
+        "column10"
+      ],
+      "settings": {
+        "title": "Ce spun clienții noștri",
+        "heading_size": "h2",
+        "image_width": "full",
+        "image_ratio": "adapt",
+        "button_label": "",
+        "button_link": "",
+        "columns_desktop": 4,
+        "column_alignment": "center",
+        "background_style": "none",
+        "color_scheme": "scheme-2",
+        "columns_mobile": "1",
+        "swipe_on_mobile": true,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "featured_collection2": {
+      "type": "featured-collection",
+      "settings": {
+        "collection": "noutati",
+        "products_to_show": 6,
+        "title": "Noutăți",
+        "heading_size": "h2",
+        "description": "",
+        "show_description": false,
+        "description_style": "body",
+        "columns_desktop": 5,
+        "enable_desktop_slider": true,
+        "full_width": false,
+        "show_view_all": false,
+        "view_all_style": "solid",
+        "color_scheme": "",
+        "image_ratio": "adapt",
+        "image_shape": "default",
+        "show_secondary_image": false,
+        "show_vendor": false,
+        "show_rating": false,
+        "quick_add": "bulk",
+        "columns_mobile": "2",
+        "swipe_on_mobile": false,
+        "padding_top": 36,
+        "padding_bottom": 52
+      }
+    },
+    "multicolumn2": {
+      "type": "multicolumn",
+      "blocks": {
+        "column11": {
+          "type": "column",
+          "settings": {
+            "title": "✅ Produse 100% Originale",
+            "text": "<p>Toate produsele sunt originale, direct de la producători și distribuitori autorizați. Fără imitații, fără compromisuri.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column12": {
+          "type": "column",
+          "settings": {
+            "title": "🚚 Livrare în 5-7 Zile",
+            "text": "<p>Livrăm direct din stocul furnizorului în România. Comanda ta ajunge rapid și în siguranță, indiferent de unde ești.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column13": {
+          "type": "column",
+          "settings": {
+            "title": "🏁 Expertiză Motorsport",
+            "text": "<p>Echipa noastră are experiență directă în motorsport. Te ajutăm să alegi echipamentul potrivit pentru nevoile tale pe pistă.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        },
+        "column14": {
+          "type": "column",
+          "settings": {
+            "title": "💰 Prețuri Competitive",
+            "text": "<p>Oferim cele mai bune prețuri pentru echipamente de racing din România. Calitate premium la prețuri corecte, fără taxe ascunse.</p>",
+            "link_label": "",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "column11",
+        "column12",
+        "column13",
+        "column14"
+      ],
+      "settings": {
+        "title": "De ce Racing-Zone?",
+        "heading_size": "h2",
+        "image_width": "full",
+        "image_ratio": "adapt",
+        "button_label": "",
+        "button_link": "",
+        "columns_desktop": 4,
+        "column_alignment": "left",
+        "background_style": "primary",
+        "color_scheme": "scheme-3",
+        "columns_mobile": "1",
+        "swipe_on_mobile": false,
+        "padding_top": 28,
+        "padding_bottom": 28
+      }
+    }
+  },
+  "order": [
+    "image_banner",
+    "brand_marquee",
+    "rich_text",
+    "featured_collection1",
+    "collection_list",
+    "multicolumn1",
+    "featured_collection2",
+    "multicolumn2"
+  ]
+}

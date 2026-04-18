@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 """
-Sync DBA product stock from Ozparts stocklist API to Shopify metafields.
+Sync stock from Ozparts stocklist APIs to Shopify metafields.
 Runs via GitHub Actions on a schedule (every 6 hours).
+
+Vendors synced:
+  - DBA (Disc Brakes Australia) — stocklist API p=5e109cda...
+  - ACS (Xtreme Performance clutch kits) — stocklist API p=5e1eb82b...
 
 Updates per product:
   - custom.stoc_text   → "Pe stoc european (X buc.)" / "Disponibil la comandă" / "Livrare specială"
@@ -11,19 +15,27 @@ Updates per product:
 """
 
 import urllib.request
+import urllib.error
 import json
 import os
 import sys
 import time
 
 # ─── Config from environment (GitHub Secrets) ────────────────────────────────
-SHOP         = os.environ.get("SHOPIFY_SHOP", "k21m1k-k0.myshopify.com")
-CLIENT_ID    = os.environ["SHOPIFY_CLIENT_ID"]
+SHOP          = os.environ.get("SHOPIFY_SHOP", "k21m1k-k0.myshopify.com")
+CLIENT_ID     = os.environ["SHOPIFY_CLIENT_ID"]
 CLIENT_SECRET = os.environ["SHOPIFY_CLIENT_SECRET"]
 
 STOCKLIST_URL = (
     "https://3cerp.eu/api/stocklist/"
     "?p=5e109cda664d6a4351e6eef6"
+    "&u=69c9076cca5cb16255ddf9ac"
+    "&f=json"
+)
+
+ACS_STOCKLIST_URL = (
+    "https://3cerp.eu/api/stocklist/"
+    "?p=5e1eb82b86eb633860334f5d"
     "&u=69c9076cca5cb16255ddf9ac"
     "&f=json"
 )
@@ -47,42 +59,69 @@ def get_token():
 
 
 def shopify_get(token, path):
-    req = urllib.request.Request(
-        f"https://{SHOP}/admin/api/2024-01/{path}",
-        headers={"X-Shopify-Access-Token": token},
-    )
-    with urllib.request.urlopen(req) as r:
-        return json.loads(r.read())
+    for attempt in range(4):
+        req = urllib.request.Request(
+            f"https://{SHOP}/admin/api/2024-01/{path}",
+            headers={"X-Shopify-Access-Token": token},
+        )
+        try:
+            with urllib.request.urlopen(req) as r:
+                return json.loads(r.read())
+        except urllib.error.HTTPError as e:
+            if e.code == 429 and attempt < 3:
+                wait = 10 * (2 ** attempt)  # 10s, 20s, 40s
+                print(f"  429 rate limit, retrying in {wait}s... (attempt {attempt+1}/3)")
+                time.sleep(wait)
+            else:
+                raise
 
 
 def shopify_put(token, path, payload):
-    body = json.dumps(payload).encode()
-    req = urllib.request.Request(
-        f"https://{SHOP}/admin/api/2024-01/{path}",
-        data=body,
-        headers={
-            "X-Shopify-Access-Token": token,
-            "Content-Type": "application/json",
-        },
-        method="PUT",
-    )
-    with urllib.request.urlopen(req) as r:
-        return json.loads(r.read())
+    for attempt in range(4):
+        body = json.dumps(payload).encode()
+        req = urllib.request.Request(
+            f"https://{SHOP}/admin/api/2024-01/{path}",
+            data=body,
+            headers={
+                "X-Shopify-Access-Token": token,
+                "Content-Type": "application/json",
+            },
+            method="PUT",
+        )
+        try:
+            with urllib.request.urlopen(req) as r:
+                return json.loads(r.read())
+        except urllib.error.HTTPError as e:
+            if e.code == 429 and attempt < 3:
+                wait = 10 * (2 ** attempt)
+                print(f"  429 rate limit, retrying in {wait}s... (attempt {attempt+1}/3)")
+                time.sleep(wait)
+            else:
+                raise
 
 
 def shopify_post(token, path, payload):
-    body = json.dumps(payload).encode()
-    req = urllib.request.Request(
-        f"https://{SHOP}/admin/api/2024-01/{path}",
-        data=body,
-        headers={
-            "X-Shopify-Access-Token": token,
-            "Content-Type": "application/json",
-        },
-        method="POST",
-    )
-    with urllib.request.urlopen(req) as r:
-        return json.loads(r.read())
+    for attempt in range(4):
+        body = json.dumps(payload).encode()
+        req = urllib.request.Request(
+            f"https://{SHOP}/admin/api/2024-01/{path}",
+            data=body,
+            headers={
+                "X-Shopify-Access-Token": token,
+                "Content-Type": "application/json",
+            },
+            method="POST",
+        )
+        try:
+            with urllib.request.urlopen(req) as r:
+                return json.loads(r.read())
+        except urllib.error.HTTPError as e:
+            if e.code == 429 and attempt < 3:
+                wait = 10 * (2 ** attempt)
+                print(f"  429 rate limit, retrying in {wait}s... (attempt {attempt+1}/3)")
+                time.sleep(wait)
+            else:
+                raise
 
 
 # ─── Stock logic ─────────────────────────────────────────────────────────────
@@ -99,66 +138,39 @@ def get_stock_status(stock_item):
     if available > 0:
         return f"Pe stoc european ({available} buc.)", "Livrabil în 2-5 zile", "green", available
     elif mfr > 0:
-        return "Disponibil la comandă", "Livrabil în 7-14 zile", "orange", 0
+        return "Disponibil la comandă", "Contactați-ne pentru informații despre livrare", "orange", 0
     elif category == "stockeditem":
-        return "Disponibil la comandă", "Livrabil în 14-21 zile", "orange", 0
+        return "Disponibil la comandă", "Contactați-ne pentru informații despre livrare", "orange", 0
     else:
         return "Livrare specială", "Termen la cerere", "red", 0
 
 
 # ─── Main sync ───────────────────────────────────────────────────────────────
 
-def main():
-    print("=== DBA Stock Sync ===")
-
-    # 1. Shopify token
-    token = get_token()
-    print("Shopify token OK")
-
-    # 2. Fetch stocklist
-    print("Fetching stocklist API...")
-    req = urllib.request.Request(STOCKLIST_URL, headers={"User-Agent": "RacingZone-Sync/1.0"})
+def fetch_stock(url):
+    req = urllib.request.Request(url, headers={"User-Agent": "RacingZone-Sync/1.0"})
     with urllib.request.urlopen(req, timeout=60) as r:
-        stock_data = json.loads(r.read())
-    stock_idx = {item["name"]: item for item in stock_data}
-    print(f"  {len(stock_idx)} products in stocklist")
+        return {item["name"]: item for item in json.loads(r.read())}
 
-    # 3. Get all DBA products from Shopify
-    print("Fetching DBA products from Shopify...")
+def sync_vendor(token, vendor, stock_idx, updated_total, skipped_total, errors_total):
+    print(f"\nFetching {vendor} products from Shopify...")
     all_products = []
-    url = "products.json?vendor=DBA&limit=250&fields=id,title,variants"
-    while True:
-        resp = shopify_get(token, url)
-        batch = resp.get("products", [])
-        all_products.extend(batch)
-        if len(batch) < 250:
-            break
-        # Simple: stop after first page (250 products is plenty for now)
-        break
-    print(f"  {len(all_products)} DBA products found")
+    url = f"products.json?vendor={vendor}&limit=250&fields=id,title,variants"
+    resp = shopify_get(token, url)
+    all_products = resp.get("products", [])
+    print(f"  {len(all_products)} {vendor} products found")
 
-    # 4. Sync each product
-    updated = 0
-    skipped = 0
-    errors  = 0
-
+    updated = skipped = errors = 0
     for product in all_products:
         pid   = product["id"]
-        title = product["title"][:50]
-
-        # Get SKU from first variant
         variants = product.get("variants", [])
-        if not variants:
-            continue
+        if not variants: continue
         sku = variants[0].get("sku", "")
-        if not sku:
-            continue
+        if not sku: continue
 
-        # Look up stock
         stock_item = stock_idx.get(sku)
         new_text, new_livrare, new_color, new_qty = get_stock_status(stock_item)
 
-        # Get current metafields
         try:
             mf_resp = shopify_get(token, f"products/{pid}/metafields.json?namespace=custom")
             existing = {m["key"]: m for m in mf_resp.get("metafields", [])}
@@ -167,40 +179,29 @@ def main():
             errors += 1
             continue
 
-        # Compare current vs new
         current_color = existing.get("stoc_color", {}).get("value", "")
         current_qty   = str(existing.get("stoc_qty", {}).get("value", "-1"))
 
         if current_color == new_color and current_qty == str(new_qty):
             skipped += 1
-            print(f"  SKIP {sku} — {new_color} ({new_qty}) unchanged")
             continue
 
-        # Update changed metafields
         updates = {
             "stoc_text":    (new_text,     "single_line_text_field"),
             "stoc_livrare": (new_livrare,  "single_line_text_field"),
             "stoc_color":   (new_color,    "single_line_text_field"),
             "stoc_qty":     (str(new_qty), "number_integer"),
         }
-
         ok = True
         for key, (value, mf_type) in updates.items():
             try:
                 if key in existing:
                     mf_id = existing[key]["id"]
-                    shopify_put(token, f"metafields/{mf_id}.json", {
-                        "metafield": {"id": mf_id, "value": value, "type": mf_type}
-                    })
+                    shopify_put(token, f"metafields/{mf_id}.json",
+                        {"metafield": {"id": mf_id, "value": value, "type": mf_type}})
                 else:
-                    shopify_post(token, f"products/{pid}/metafields.json", {
-                        "metafield": {
-                            "namespace": "custom",
-                            "key": key,
-                            "value": value,
-                            "type": mf_type,
-                        }
-                    })
+                    shopify_post(token, f"products/{pid}/metafields.json", {"metafield": {
+                        "namespace": "custom", "key": key, "value": value, "type": mf_type}})
                 time.sleep(0.2)
             except Exception as e:
                 print(f"  ERROR updating {key} for {sku}: {e}")
@@ -208,13 +209,35 @@ def main():
 
         if ok:
             updated += 1
-            old_info = f"{current_color}({current_qty})"
-            new_info = f"{new_color}({new_qty})"
-            print(f"  UPDATED {sku}: {old_info} → {new_info} | {new_text}")
+            print(f"  UPDATED {sku}: {current_color}({current_qty}) → {new_color}({new_qty})")
         else:
             errors += 1
-
         time.sleep(0.3)
+
+    print(f"  {vendor}: {updated} updated, {skipped} unchanged, {errors} errors")
+    return updated_total + updated, skipped_total + skipped, errors_total + errors
+
+
+def main():
+    print("=== Stock Sync: DBA + ACS ===")
+
+    # 1. Shopify token
+    token = get_token()
+    print("Shopify token OK")
+
+    # 2. Fetch both stocklists
+    print("\nFetching stocklist APIs...")
+    dba_stock = fetch_stock(STOCKLIST_URL)
+    acs_stock = fetch_stock(ACS_STOCKLIST_URL)
+    print(f"  DBA: {len(dba_stock)} SKUs | ACS: {len(acs_stock)} SKUs")
+
+    # 4. Sync each product
+    updated = 0
+    skipped = 0
+    errors  = 0
+
+    updated, skipped, errors = sync_vendor(token, "DBA", dba_stock, updated, skipped, errors)
+    updated, skipped, errors = sync_vendor(token, "ACS", acs_stock, updated, skipped, errors)
 
     print(f"\n=== Done: {updated} updated, {skipped} unchanged, {errors} errors ===")
     if errors > 0:

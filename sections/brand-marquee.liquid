@@ -1,0 +1,128 @@
+{% style %}
+  #brand-marquee-{{ section.id }} {
+    overflow: hidden;
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+  }
+  #brand-marquee-{{ section.id }} .bm-track {
+    display: flex;
+    align-items: center;
+    width: max-content;
+    animation: bm-scroll-{{ section.id }} {{ section.settings.speed }}s linear infinite;
+  }
+  #brand-marquee-{{ section.id }} .bm-track:hover {
+    animation-play-state: paused;
+  }
+  #brand-marquee-{{ section.id }} .bm-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 3rem;
+    flex-shrink: 0;
+  }
+  #brand-marquee-{{ section.id }} .bm-item img {
+    max-height: {{ section.settings.logo_height }}px;
+    width: auto;
+    object-fit: contain;
+    opacity: 0.85;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+  #brand-marquee-{{ section.id }} .bm-item img:hover {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+  @keyframes bm-scroll-{{ section.id }} {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+{% endstyle %}
+
+<div id="brand-marquee-{{ section.id }}" class="color-{{ section.settings.color_scheme }} gradient">
+  <div class="bm-track">
+    {%- comment -%} Block-based logos (BC Racing, KW, ST, HSD, Bilstein) {%- endcomment -%}
+    {%- for block in section.blocks -%}
+      {%- if block.settings.image != blank -%}
+        <div class="bm-item" {{ block.shopify_attributes }}>
+          {{- block.settings.image | image_url: width: 300 | image_tag: loading: 'lazy', alt: block.settings.image.alt | default: 'Brand logo' -}}
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+    {%- comment -%} Duplicate set for seamless infinite loop {%- endcomment -%}
+    {%- for block in section.blocks -%}
+      {%- if block.settings.image != blank -%}
+        <div class="bm-item" aria-hidden="true">
+          {{- block.settings.image | image_url: width: 300 | image_tag: loading: 'lazy', alt: '' -}}
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Brand Marquee",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-4"
+    },
+    {
+      "type": "range",
+      "id": "speed",
+      "min": 8,
+      "max": 60,
+      "step": 2,
+      "default": 40,
+      "label": "Scroll speed (seconds)"
+    },
+    {
+      "type": "range",
+      "id": "logo_height",
+      "min": 20,
+      "max": 80,
+      "step": 4,
+      "default": 40,
+      "label": "Logo height (px)"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 4,
+      "max": 40,
+      "step": 4,
+      "default": 12,
+      "label": "Padding top"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 4,
+      "max": 40,
+      "step": 4,
+      "default": 12,
+      "label": "Padding bottom"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "logo",
+      "name": "Brand logo",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Logo image"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Brand Marquee"
+    }
+  ]
+}
+{% endschema %}

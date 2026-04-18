@@ -1,0 +1,13 @@
+.claude/
+add_helmet_sizes.py
+import_all_seats.py
+import_helmets_hans.py
+update_products_images_seo.py
+create_scaune_sport.py
+setup_filters.py
+import_ecu_accessories.py
+import_takata_wheels.py
+create_collections.py
+create_menu.py
+delete_collections.py
+upload_collection_images.py
