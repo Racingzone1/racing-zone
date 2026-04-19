@@ -7,6 +7,7 @@ Vendors synced:
   - DBA (Disc Brakes Australia) — stocklist API p=5e109cda...
   - ACS (Xtreme Performance clutch kits) — stocklist API p=5e1eb82b...
   - Whiteline — stocklist API p=5e1eb8b3...
+  - Xtreme Outback (clutch kits 4x4/Nissan) — stocklist API p=5e1eb874...
 
 Updates per product:
   - custom.stoc_text   → "Pe stoc european (X buc.)" / "Disponibil la comandă" / "Livrare specială"
@@ -44,6 +45,13 @@ ACS_STOCKLIST_URL = (
 WHITELINE_STOCKLIST_URL = (
     "https://3cerp.eu/api/stocklist/"
     "?p=5e1eb8b386eb633860334f5f"
+    "&u=69c9076cca5cb16255ddf9ac"
+    "&f=json"
+)
+
+XTREMEOUTBACK_STOCKLIST_URL = (
+    "https://3cerp.eu/api/stocklist/"
+    "?p=5e1eb87486eb633860334f5e"
     "&u=69c9076cca5cb16255ddf9ac"
     "&f=json"
 )
@@ -227,7 +235,7 @@ def sync_vendor(token, vendor, stock_idx, updated_total, skipped_total, errors_t
 
 
 def main():
-    print("=== Stock Sync: DBA + ACS + Whiteline ===")
+    print("=== Stock Sync: DBA + ACS + Whiteline + Xtreme Outback ===")
 
     # 1. Shopify token
     token = get_token()
@@ -235,19 +243,21 @@ def main():
 
     # 2. Fetch all stocklists
     print("\nFetching stocklist APIs...")
-    dba_stock       = fetch_stock(STOCKLIST_URL)
-    acs_stock       = fetch_stock(ACS_STOCKLIST_URL)
-    whiteline_stock = fetch_stock(WHITELINE_STOCKLIST_URL)
-    print(f"  DBA: {len(dba_stock)} SKUs | ACS: {len(acs_stock)} SKUs | Whiteline: {len(whiteline_stock)} SKUs")
+    dba_stock           = fetch_stock(STOCKLIST_URL)
+    acs_stock           = fetch_stock(ACS_STOCKLIST_URL)
+    whiteline_stock     = fetch_stock(WHITELINE_STOCKLIST_URL)
+    xtremeoutback_stock = fetch_stock(XTREMEOUTBACK_STOCKLIST_URL)
+    print(f"  DBA: {len(dba_stock)} SKUs | ACS: {len(acs_stock)} SKUs | Whiteline: {len(whiteline_stock)} SKUs | Xtreme Outback: {len(xtremeoutback_stock)} SKUs")
 
     # 3. Sync each vendor
     updated = 0
     skipped = 0
     errors  = 0
 
-    updated, skipped, errors = sync_vendor(token, "DBA",      dba_stock,       updated, skipped, errors)
-    updated, skipped, errors = sync_vendor(token, "ACS",      acs_stock,       updated, skipped, errors)
-    updated, skipped, errors = sync_vendor(token, "Whiteline", whiteline_stock, updated, skipped, errors)
+    updated, skipped, errors = sync_vendor(token, "DBA",            dba_stock,           updated, skipped, errors)
+    updated, skipped, errors = sync_vendor(token, "ACS",            acs_stock,           updated, skipped, errors)
+    updated, skipped, errors = sync_vendor(token, "Whiteline",      whiteline_stock,     updated, skipped, errors)
+    updated, skipped, errors = sync_vendor(token, "Xtreme Outback", xtremeoutback_stock, updated, skipped, errors)
 
     print(f"\n=== Done: {updated} updated, {skipped} unchanged, {errors} errors ===")
     if errors > 0:
